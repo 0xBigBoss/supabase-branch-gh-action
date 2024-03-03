@@ -1,8 +1,4 @@
-import {
-	DatabaseBranchesBetaService,
-	SupabaseManager,
-} from "@0xbigboss/supabase-manager";
-
+import { type ApiError, SupabaseManager } from "@0xbigboss/supabase-manager";
 import * as core from "@actions/core";
 
 process.on("unhandledRejection", handleError);
@@ -41,7 +37,7 @@ async function main(): Promise<void> {
 	let branchName = process.env.GITHUB_HEAD_REF; // default to GITHUB_HEAD_REF if available (for PRs)
 	if (!branchName) {
 		// if not available, try to get it from GITHUB_REF
-		branchName = (process.env.GITHUB_REF ?? "").split("/").pop();
+		branchName = (process.env.GITHUB_REF ?? "").split("refs/heads/")[1];
 	}
 
 	if (!branchName) {
@@ -51,54 +47,71 @@ async function main(): Promise<void> {
 
 	core.info(`Current Git branch: ${branchName}`);
 
-	// find the supabase branch ID of the database preview branch
+	// main loop: find the supabase branch ID of the database preview branch
 	// (optionally) wait for the migrations to be applied
 	// up to a certain timeout
-	let branchId = "";
 	const now = Date.now();
-	while (!branchId && Date.now() - now < timeout * 1000) {
-		const branches = await supabase.databaseBranchesBeta.getBranches({
-			ref: sbRef,
-		});
+	while (Date.now() - now < timeout * 1000) {
+		const branches = await supabase.databaseBranchesBeta
+			.getBranches({
+				ref: sbRef,
+			})
+			.catch((err: ApiError) => {
+				if (err.status === 429 || err.status >= 500) {
+					core.warning(`Failed fetching fetching branches: ${err}`);
+					return [];
+				}
+				const _err = new Error("Failed fetching fetching branches");
+				_err.cause = err;
+				throw _err;
+			});
 		const currentBranch = branches.find((b) => b.name === branchName);
 		if (
 			currentBranch &&
 			(!waitForMigrations || currentBranch.status === "MIGRATIONS_PASSED")
 		) {
-			branchId = currentBranch.id;
-			break;
+			const branch = await supabase.databaseBranchesBeta
+				.getBranchDetails({
+					branchId: currentBranch.id,
+				})
+				.catch((err: ApiError) => {
+					if (err.status === 429 || err.status >= 500) {
+						core.warning(`Error fetching branch details: ${err}`);
+						return null;
+					}
+					const _err = new Error("Error fetching branch details");
+					_err.cause = err;
+					throw _err;
+				});
+
+			if (!branch) {
+				core.warning("Branch details not found");
+				continue;
+			}
+
+			// set outputs and mask secrets
+			for (const [k, v] of Object.entries(branch)) {
+				const _v = v.toString();
+				core.setSecret(_v);
+				core.setOutput(k, _v);
+			}
+
+			core.setOutput("api_url", `https://${branch.ref}.supabase.co/rest/v1`);
+			core.setOutput(
+				"graphql_url",
+				`https://${branch.ref}.supabase.co/graphql/v1`,
+			);
+			core.info("success");
+			return; // success
 		}
+
 		core.info(
 			`Waiting for branch ${branchName} to be created. Status=${currentBranch?.status}`,
 		);
 		await new Promise((resolve) => setTimeout(resolve, 2900));
 	}
 
-	if (!branchId) {
-		core.setFailed("Branch not found");
-		return;
-	}
-
-	const branch = await supabase.databaseBranchesBeta.getBranchDetails({
-		branchId,
-	});
-
-	if (!branch) {
-		core.setFailed("Branch details not found");
-		return;
-	}
-
-	// set outputs and mask secrets
-	for (const [k, v] of Object.entries(branch)) {
-		const _v = v.toString();
-		core.setSecret(_v);
-		core.setOutput(k, _v);
-	}
-
-	core.setOutput("api_url", `https://${branch.ref}.supabase.co/rest/v1`);
-	core.setOutput("graphql_url", `https://${branch.ref}.supabase.co/graphql/v1`);
-
-	core.info("done");
+	core.setFailed(`Timeout waiting for branch ${branchName} to be created`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -50,4 +50,20 @@ bun run build
 
 Commit the changes and push!
 
+## Debugging
+
+You can _mock_ the action environment by running it like so:
+
+```typescript
+process.env[
+ `INPUT_${"supabase-access-token".replace(/ /g, "_").toUpperCase()}`
+] = process.env.SUPABASE_ACCESS_TOKEN;
+process.env[`INPUT_${"supabase-project-id".replace(/ /g, "_").toUpperCase()}`] =
+ process.env.SUPABASE_PROJECT_ID;
+process.env[`INPUT_${"wait-for-migrations".replace(/ /g, "_").toUpperCase()}`] =
+ "false";
+process.env[`INPUT_${"timeout".replace(/ /g, "_").toUpperCase()}`] = "60";
+await main();
+```
+
 This project was created using `bun init` in bun v1.0.29. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
