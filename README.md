@@ -24,14 +24,14 @@ Basic usage:
     timeout: 60 # Optional. Default is 60.
 - name: Get result
   run: | 
-    echo "ref:=${{steps.supabase-branch.outputs.ref:}}"
-    echo "api_url:=${{steps.supabase-branch.outputs.api_url:}}"
-    echo "graphql_url:=${{steps.supabase-branch.outputs.graphql_url:}}"
-    echo "db_host:=${{steps.supabase-branch.outputs.db_host:}}"
-    echo "db_port:=${{steps.supabase-branch.outputs.db_port:}}"
-    echo "db_user:=${{steps.supabase-branch.outputs.db_user:}}"
-    echo "db_password:=${{steps.supabase-branch.outputs.db_password:}}"
-    echo "jwt_secret:=${{steps.supabase-branch.outputs.jwt_secret:}}"
+    echo "ref=${{steps.supabase-branch.outputs.ref}}"
+    echo "api_url=${{steps.supabase-branch.outputs.api_url}}"
+    echo "graphql_url=${{steps.supabase-branch.outputs.graphql_url}}"
+    echo "db_host=${{steps.supabase-branch.outputs.db_host}}"
+    echo "db_port=${{steps.supabase-branch.outputs.db_port}}"
+    echo "db_user=${{steps.supabase-branch.outputs.db_user}}"
+    echo "db_password=${{steps.supabase-branch.outputs.db_password}}"
+    echo "jwt_secret=${{steps.supabase-branch.outputs.jwt_secret}}"
 ```
 
 ## Contributing
