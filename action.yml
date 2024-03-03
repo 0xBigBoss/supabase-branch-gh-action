@@ -1,0 +1,43 @@
+name: Supabase Database Branching Preview
+author: GitHub
+description: Waits for a Supabase database branch to be ready and returns the database connection details.
+branding:
+  color: green
+  icon: database
+inputs:
+  supabase-access-token:
+    description: The Supabase Access Token with experimental features enabled.
+    default: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    required: true
+  supabase-project-id:
+    description: The Supabase Project ID with database branching enabled.
+    default: ${{ secrets.SUPABASE_PROJECT_ID }}
+    required: true
+  wait-for-migrations:
+    description: Whether to wait for migrations to be applied before returning the branch.
+    default: "false"
+    required: false
+  timeout:
+    description: The maximum time in seconds to wait for the branch to be ready.
+    default: "60"
+    required: false
+outputs:
+  ref:
+    description: The ID of the branch in Supabase.
+  api_url:
+    description: The API URL of the branch.
+  graphql_url:
+    description: The GraphQL URL of the branch.
+  db_host:
+    description: The DB host of the branch.
+  db_port:
+    description: The DB port of the branch.
+  db_user:
+    description: The DB user of the branch.
+  db_password:
+    description: The DB password of the branch.
+  jwt_secret:
+    description: The JWT secret of the branch.
+runs:
+  using: node20
+  main: dist/index.js

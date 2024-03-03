@@ -1,0 +1,27 @@
+{
+  "name": "supabase-branch-gh-action",
+  "module": "src/index.ts",
+  "type": "module",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=20.0.0 <21.0.0"
+  },
+  "private": true,
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --target=node",
+    "lint": "bunx @biomejs/biome check ./src/",
+    "lint:fix": "bunx @biomejs/biome check --apply ./src/"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.5.3",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@0xbigboss/supabase-manager": "^0.0.2",
+    "@actions/core": "^1.10.1"
+  }
+}
