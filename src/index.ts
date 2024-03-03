@@ -34,7 +34,7 @@ async function main(): Promise<void> {
 
 	const supabase = new SupabaseManager({
 		TOKEN: sbToken,
-		BASE: "https://api.supabase.com/",
+		BASE: "https://api.supabase.com",
 	});
 
 	// find branch name
