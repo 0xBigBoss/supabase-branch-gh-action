@@ -4,14 +4,13 @@ import {
 } from "@0xbigboss/supabase-manager";
 
 import * as core from "@actions/core";
-console.log(DatabaseBranchesBetaService);
 
 process.on("unhandledRejection", handleError);
 main().catch(handleError);
 
 async function main(): Promise<void> {
 	const sbToken = core.getInput("supabase-access-token");
-	const sbRef = core.getInput("supbase-project-id");
+	const sbRef = core.getInput("supabase-project-id");
 	const waitForMigrations = core.getBooleanInput("wait-for-migrations");
 	const timeout = Number(core.getInput("timeout")); // timeout in seconds
 
