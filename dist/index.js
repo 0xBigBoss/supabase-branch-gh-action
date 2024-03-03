@@ -19378,6 +19378,8 @@ async function main() {
   const sbRef = core.getInput("supbase-project-id");
   const waitForMigrations = core.getBooleanInput("wait-for-migrations");
   const timeout = Number(core.getInput("timeout"));
+  core.setSecret(sbToken);
+  core.setSecret(sbRef);
   if (!sbToken) {
     core.setFailed("Supabase access token is not defined");
     return;

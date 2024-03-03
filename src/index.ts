@@ -15,6 +15,9 @@ async function main(): Promise<void> {
 	const waitForMigrations = core.getBooleanInput("wait-for-migrations");
 	const timeout = Number(core.getInput("timeout")); // timeout in seconds
 
+	core.setSecret(sbToken); // users maybe set it up as ENV var
+	core.setSecret(sbRef); // users maybe set it up as ENV var
+
 	if (!sbToken) {
 		core.setFailed("Supabase access token is not defined");
 		return;

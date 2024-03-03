@@ -7,11 +7,9 @@ branding:
 inputs:
   supabase-access-token:
     description: The Supabase Access Token with experimental features enabled.
-    default: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
     required: true
   supabase-project-id:
     description: The Supabase Project ID with database branching enabled.
-    default: ${{ secrets.SUPABASE_PROJECT_ID }}
     required: true
   wait-for-migrations:
     description: Whether to wait for migrations to be applied before returning the branch.
