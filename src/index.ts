@@ -38,8 +38,9 @@ async function main(): Promise<void> {
 	});
 
 	// find branch name
-	let branchName = process.env.GITHUB_HEAD_REF;
-	if (branchName) {
+	let branchName = process.env.GITHUB_HEAD_REF; // default to GITHUB_HEAD_REF if available (for PRs)
+	if (!branchName) {
+		// if not available, try to get it from GITHUB_REF
 		branchName = (process.env.GITHUB_REF ?? "").split("/").pop();
 	}
 
