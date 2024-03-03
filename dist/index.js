@@ -19397,7 +19397,7 @@ async function main() {
     BASE: "https://api.supabase.com/"
   });
   let branchName = process.env.GITHUB_HEAD_REF;
-  if (branchName) {
+  if (!branchName) {
     branchName = (process.env.GITHUB_REF ?? "").split("/").pop();
   }
   if (!branchName) {
