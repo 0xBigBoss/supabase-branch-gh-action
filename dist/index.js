@@ -19420,7 +19420,7 @@ async function main() {
     });
     const currentBranch = branches.find((b) => b.name === branchName);
     if (currentBranch && (!waitForMigrations || currentBranch.status === "MIGRATIONS_PASSED")) {
-      const branch = await supabase.databaseBranchesBeta.getBranchDetails({
+      const branchDetails = await supabase.databaseBranchesBeta.getBranchDetails({
         branchId: currentBranch.id
       }).catch((err) => {
         if (err.status === 429 || err.status >= 500) {
@@ -19431,17 +19431,48 @@ async function main() {
         _err.cause = err;
         throw _err;
       });
-      if (!branch) {
+      if (!branchDetails) {
         core.warning("Branch details not found");
         continue;
       }
-      for (const [k, v] of Object.entries(branch)) {
-        const _v = v.toString();
-        core.setSecret(_v);
-        core.setOutput(k, _v);
+      const branchKeys = [
+        "id",
+        "name",
+        "project_ref",
+        "parent_project_ref",
+        "git_branch",
+        "pr_number",
+        "reset_on_push",
+        "status",
+        "created_at",
+        "updated_at"
+      ];
+      for (let key of branchKeys) {
+        const value = currentBranch[key];
+        if (value) {
+          if (value === "status") {
+            key += "branch_status";
+          }
+          core.setSecret(value.toString());
+          core.setOutput(key, value.toString());
+        }
       }
-      core.setOutput("api_url", `https://${branch.ref}.supabase.co/rest/v1`);
-      core.setOutput("graphql_url", `https://${branch.ref}.supabase.co/graphql/v1`);
+      const branchDetailsKeys = [
+        "db_host",
+        "db_port",
+        "db_user",
+        "db_pass",
+        "jwt_secret"
+      ];
+      for (const key of branchDetailsKeys) {
+        const value = branchDetails[key];
+        if (value) {
+          core.setSecret(value.toString());
+          core.setOutput(key, value.toString());
+        }
+      }
+      core.setOutput("api_url", `https://${branchDetails.ref}.supabase.co/rest/v1`);
+      core.setOutput("graphql_url", `https://${branchDetails.ref}.supabase.co/graphql/v1`);
       core.info("success");
       return;
     }
