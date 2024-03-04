@@ -1,5 +1,5 @@
 name: Supabase Database Branching Preview
-author: GitHub
+author: 0xbigboss
 description: Waits for a Supabase database branch to be ready and returns the database connection details.
 branding:
   color: green
