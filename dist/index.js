@@ -19374,8 +19374,8 @@ class SupabaseManager {
 // src/index.ts
 var core = __toESM(require_core(), 1);
 async function main() {
-  const sbToken = core.getInput("supabase-access-token");
-  const sbRef = core.getInput("supabase-project-id");
+  const sbToken = core.getInput("supabase-access-token", { required: true });
+  const sbRef = core.getInput("supabase-project-id", { required: true });
   const waitForMigrations = core.getBooleanInput("wait-for-migrations");
   const timeout = Number(core.getInput("timeout"));
   core.setSecret(sbToken);

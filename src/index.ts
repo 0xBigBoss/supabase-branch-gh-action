@@ -5,8 +5,8 @@ process.on("unhandledRejection", handleError);
 main().catch(handleError);
 
 async function main(): Promise<void> {
-	const sbToken = core.getInput("supabase-access-token");
-	const sbRef = core.getInput("supabase-project-id");
+	const sbToken = core.getInput("supabase-access-token", { required: true });
+	const sbRef = core.getInput("supabase-project-id", { required: true });
 	const waitForMigrations = core.getBooleanInput("wait-for-migrations");
 	const timeout = Number(core.getInput("timeout")); // timeout in seconds
 
