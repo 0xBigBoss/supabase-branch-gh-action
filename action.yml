@@ -54,6 +54,10 @@ outputs:
     description: The DB password of the branch.
   jwt_secret:
     description: The JWT secret of the branch.
+  anon_key:
+    description: The anon key of the branch.
+  service_role_key:
+    description: The service role key of the branch.
 runs:
   using: node20
   main: dist/index.js
