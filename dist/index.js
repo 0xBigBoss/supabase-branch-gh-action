@@ -19435,6 +19435,25 @@ async function main() {
         core.warning("Branch details not found");
         continue;
       }
+      const apiKeys = await supabase.projects.getProjectApiKeys({
+        ref: currentBranch.project_ref
+      }).catch((err) => {
+        if (err.status === 429 || err.status >= 500) {
+          core.warning(`Error fetching api keys: ${err}`);
+          return null;
+        }
+        const _err = new Error("Error fetching api keys");
+        _err.cause = err;
+        throw _err;
+      });
+      if (!apiKeys) {
+        core.warning("Api keys not found");
+        continue;
+      }
+      for (const key of apiKeys) {
+        core.setSecret(key.api_key);
+        core.setOutput(`${key.name}_key`, key.api_key);
+      }
       const branchKeys = [
         "id",
         "name",
@@ -19487,3 +19506,6 @@ var handleError = function(err) {
 };
 process.on("unhandledRejection", handleError);
 main().catch(handleError);
+export {
+  main
+};
