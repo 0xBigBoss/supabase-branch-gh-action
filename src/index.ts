@@ -70,7 +70,7 @@ async function main(): Promise<void> {
 			currentBranch &&
 			(!waitForMigrations || currentBranch.status === "MIGRATIONS_PASSED")
 		) {
-			const branch = await supabase.databaseBranchesBeta
+			const branchDetails = await supabase.databaseBranchesBeta
 				.getBranchDetails({
 					branchId: currentBranch.id,
 				})
@@ -84,22 +84,31 @@ async function main(): Promise<void> {
 					throw _err;
 				});
 
-			if (!branch) {
+			if (!branchDetails) {
 				core.warning("Branch details not found");
 				continue;
 			}
 
 			// set outputs and mask secrets
-			for (const [k, v] of Object.entries(branch)) {
+			for (const [k, v] of Object.entries(currentBranch)) {
 				const _v = v.toString();
 				core.setSecret(_v);
 				core.setOutput(k, _v);
 			}
 
-			core.setOutput("api_url", `https://${branch.ref}.supabase.co/rest/v1`);
+			for (const [k, v] of Object.entries(branchDetails)) {
+				const _v = v.toString();
+				core.setSecret(_v);
+				core.setOutput(k, _v);
+			}
+
+			core.setOutput(
+				"api_url",
+				`https://${branchDetails.ref}.supabase.co/rest/v1`,
+			);
 			core.setOutput(
 				"graphql_url",
-				`https://${branch.ref}.supabase.co/graphql/v1`,
+				`https://${branchDetails.ref}.supabase.co/graphql/v1`,
 			);
 			core.info("success");
 			return; // success
