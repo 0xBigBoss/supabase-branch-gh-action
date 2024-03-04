@@ -90,16 +90,42 @@ async function main(): Promise<void> {
 			}
 
 			// set outputs and mask secrets
-			for (const [k, v] of Object.entries(currentBranch)) {
-				const _v = v.toString();
-				core.setSecret(_v);
-				core.setOutput(k, _v);
+			const branchKeys = [
+				"id",
+				"name",
+				"project_ref",
+				"parent_project_ref",
+				"git_branch",
+				"pr_number",
+				"reset_on_push",
+				"status",
+				"created_at",
+				"updated_at",
+			] as const;
+			for (let key of branchKeys) {
+				const value = currentBranch[key];
+				if (value) {
+					if (value === "status") {
+						key += "branch_status";
+					}
+					core.setSecret(value.toString());
+					core.setOutput(key, value.toString());
+				}
 			}
 
-			for (const [k, v] of Object.entries(branchDetails)) {
-				const _v = v.toString();
-				core.setSecret(_v);
-				core.setOutput(k, _v);
+			const branchDetailsKeys = [
+				"db_host",
+				"db_port",
+				"db_user",
+				"db_pass",
+				"jwt_secret",
+			] as const;
+			for (const key of branchDetailsKeys) {
+				const value = branchDetails[key];
+				if (value) {
+					core.setSecret(value.toString());
+					core.setOutput(key, value.toString());
+				}
 			}
 
 			core.setOutput(

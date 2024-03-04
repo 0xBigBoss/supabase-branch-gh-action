@@ -20,8 +20,26 @@ inputs:
     default: "60"
     required: false
 outputs:
-  ref:
+  id:
     description: The ID of the branch in Supabase.
+  name:
+    description: The name of the branch in Supabase.
+  project_ref:
+    description: The project reference ID of the branch in Supabase.
+  parent_project_ref:
+    description: The parent project ID of the branch in Supabase.
+  git_branch:
+    description: The git branch of the branch in Supabase.
+  pr_number:
+    description: The pull request number of the branch in Supabase.
+  reset_on_push:
+    description: Whether the branch is reset on push.
+  branch_status:
+    description: The status of the branch in Supabase.
+  created_at:
+    description: The creation date of the branch in Supabase.
+  updated_at:
+    description: The last update date of the branch in Supabase.
   api_url:
     description: The API URL of the branch.
   graphql_url:
@@ -32,7 +50,7 @@ outputs:
     description: The DB port of the branch.
   db_user:
     description: The DB user of the branch.
-  db_password:
+  db_pass:
     description: The DB password of the branch.
   jwt_secret:
     description: The JWT secret of the branch.
