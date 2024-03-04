@@ -32,6 +32,8 @@ Basic usage:
     echo "db_user=${{steps.supabase-branch.outputs.db_user}}"
     echo "db_password=${{steps.supabase-branch.outputs.db_password}}"
     echo "jwt_secret=${{steps.supabase-branch.outputs.jwt_secret}}"
+    echo "anon_key=${{steps.supabase-branch.outputs.anon_key}}"
+    echo "service_role_key=${{steps.supabase-branch.outputs.service_role_key}}"
 ```
 
 ## Contributing
