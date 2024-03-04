@@ -15,7 +15,7 @@ All outputs except api_url and graphql_url will be masked in the GitHub Actions 
 Basic usage:
 
 ```yaml
-- uses: 0xbigboss/supabase-branch-gh-action@0.0.0
+- uses: 0xbigboss/supabase-branch-gh-action@v1
   id: supabase-branch
   with:
     supabase-access-token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
